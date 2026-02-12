@@ -15,6 +15,30 @@ Started: 2026-02-12T05:22:00+03:00
 - DataCollector reads from ~/.openclaw/agents/, dashboard/data.json, and openclaw.json
 - Session JSONL files contain tool usage in 'tool_result' and 'toolCall' events
 - Dashboard data.json uses 'agent' field for agent name (not 'agentId')
+- Client components tested via source file inspection (not runtime) because Vite bundles output
+- CSS uses CSS custom properties (variables) for theming with :root selector
+- Responsive design uses media queries at 640px (mobile) and 1024px (tablet) breakpoints
+
+---
+
+## 2026-02-12 19:29 - US-004: Create React dashboard shell with dark theme
+- Created global.css with CSS custom properties for dark theme (colors, spacing, typography, glass-morphism)
+- Created GlassCard component with backdrop-filter blur effect and transparency
+- Updated App.tsx with main layout structure and 6 dashboard cards
+- Created App.css with responsive grid layout (3-col desktop, 2-col tablet, 1-col mobile)
+- Added build:client script to package.json for Vite build
+- Created comprehensive UI tests in src/__tests__/ui.test.tsx (28 tests)
+- All 85 tests pass (28 UI + 29 DataCollector + 16 setup + 12 WebSocket)
+- Typecheck passes
+- npm run build:client produces dist/client/index.html and assets/ with CSS and JS bundles
+- Commit: e9dce1f
+
+**Learnings:**
+- With react-jsx JSX transform, React doesn't need to be imported in every file
+- Vite bundles client code, so UI tests inspect source files rather than importing compiled components
+- Glass-morphism uses backdrop-filter with blur() and semi-transparent backgrounds
+- CSS custom properties in :root provide global theming system
+- Responsive design works best with mobile-first approach and min-width media queries (but max-width used here)
 
 ---
 

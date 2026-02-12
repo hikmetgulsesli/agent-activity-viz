@@ -368,3 +368,58 @@ Started: 2026-02-12T05:22:00+03:00
 - File path resolution in tests: from dist/__tests__ go up 2 levels (../../src) to reach source files
 - Express sendFile() serves index.html with correct MIME type for SPA routes
 ---
+
+## 2026-02-12 21:15 - US-012: Configure nginx reverse proxy for ai.setrox.com.tr/agents-viz
+- Created nginx configuration file at nginx/agents-viz.conf
+- Implemented rate limiting zone for WebSocket connections (max 10 per IP)
+- Configured upstream for localhost:3503 with keepalive connections
+- Set up HTTP server (port 80) with ACME challenge support and HTTPS redirect
+- Configured HTTPS server (port 443) with SSL/TLS, HTTP/2, OCSP stapling
+- Added security headers: HSTS, X-Frame-Options, X-Content-Type-Options, X-XSS-Protection
+- Implemented URL rewriting to strip /agents-viz prefix for backend routing
+- Configured WebSocket proxy with proper Upgrade and Connection headers
+- Set WebSocket timeout to 24 hours (86400s) for persistent connections
+- Implemented static asset caching with Cache-Control: max-age=3600 (1 hour)
+- Added CORS headers for fonts and static assets
+- Created health check endpoint at /health (no access logging)
+- Configured logging to /var/log/nginx/agents-viz-{access,error}.log
+- Created comprehensive DEPLOY.md documentation with:
+  - Step-by-step deployment instructions
+  - Certbot/Let's Encrypt SSL setup guide
+  - nginx -t validation testing
+  - Verification commands (curl tests for HTTP, HTTPS, WebSocket, caching, rate limiting)
+  - Troubleshooting section for common issues
+  - Security considerations (firewall, port exposure warnings)
+  - Production checklist with checkbox format
+  - Certificate renewal instructions
+  - Rollback procedure
+- Created nginx-config.test.ts with 115 comprehensive tests covering:
+  - Configuration file existence and readability
+  - Rate limiting configuration (zone, status code, limit)
+  - Upstream configuration (server, keepalive)
+  - HTTP server (port 80, ACME challenge, redirect)
+  - HTTPS server (SSL certificates, TLS protocols, OCSP stapling)
+  - Security headers (HSTS, X-Frame-Options, etc.)
+  - Application location (/agents-viz, rewrites, proxy headers)
+  - WebSocket support (upgrade headers, timeouts, buffering)
+  - Static asset caching (Cache-Control, expires, CORS)
+  - Health check endpoint
+  - Logging configuration
+  - DEPLOY.md documentation verification
+  - Best practices (comments, SSL config, IPv4/IPv6, HTTP/2)
+- All 615 tests pass (115 nginx-config + 500 existing)
+- Typecheck passes
+- Commit: 782ef01
+
+**Learnings:**
+- Nginx rate limiting requires limit_conn_zone at http level and limit_conn in location
+- WebSocket proxying requires proxy_set_header Upgrade/Connection + long timeouts
+- SSL config: prefer TLS 1.2+, enable OCSP stapling, use modern ciphers
+- Static asset caching: use regex location ~ \.(extensions)$ within main location
+- ACME challenge: location /.well-known/acme-challenge/ before HTTP redirect
+- URL rewriting: rewrite ^/agents-viz/(.*)$ /$1 break; strips prefix for backend
+- SPA hosting through nginx requires both static file serving and fallback routing
+- Security headers should use "always" flag to ensure they're added even on error responses
+- Production deployment requires systematic verification: HTTP redirect, HTTPS, WebSocket, caching, rate limiting
+- Comprehensive documentation prevents deployment issues - include troubleshooting, verification, rollback
+---

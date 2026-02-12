@@ -301,3 +301,43 @@ Started: 2026-02-12T05:22:00+03:00
 - Mobile arrow rotation (rotate(90deg)) changes horizontal → to vertical ↓ layout
 - Test file path inspection confirms component structure without runtime execution
 ---
+
+## 2026-02-12 21:01 - US-010: Create main dashboard layout combining all panels
+- Updated App.tsx to implement 3-column responsive grid layout (25% - 50% - 25%)
+- Left column: Agent List panel
+- Center column: Activity Feed panel (largest, 50% width)
+- Right column: Token Usage + Model Switches panels stacked
+- Created ErrorBoundary class component for graceful error handling
+- ErrorBoundary catches component errors and displays user-friendly error UI with reload button
+- Implemented enhanced header with connection status indicator (green/yellow/red dot)
+- Connection status: green=connected, yellow=connecting, red=disconnected
+- Status indicator pulses when connecting/reconnected, static when connected
+- Added last update timestamp in header (HH:MM:SS format, updates when data changes)
+- Header layout: left (title + subtitle), right (connection status + timestamp)
+- useEffect updates lastUpdate whenever events or activities change
+- Created comprehensive Dashboard tests (96 tests covering layout, header, responsive, ErrorBoundary, integration)
+- Updated ui.test.tsx to match new 3-column layout structure
+- All panels receive data from single useWebSocket hook instance
+- Responsive design: 3-col desktop (1fr 2fr 1fr), 2-col tablet, 1-col mobile
+- Tablet layout: left + center in row 1, right column spans full width in row 2 with horizontal flex
+- Mobile layout: all columns stack vertically, header flexes to column, reduced padding
+- Created ErrorBoundary.css with centered error UI, details/summary for error info
+- All 535 tests pass (96 Dashboard + 168 ModelSwitches + 70 TokenUsage + 77 ActivityFeed + 77 AgentList + 87 useWebSocket + 28 UI + 29 DataCollector + 16 setup + 12 WebSocket)
+- Typecheck passes
+- Build succeeds (dist/client bundle generated)
+- Commit: 49667ef
+
+**Learnings:**
+- CSS Grid `1fr 2fr 1fr` creates perfect 25%-50%-25% layout for 3-column dashboard
+- React ErrorBoundary must be class component (getDerivedStateFromError, componentDidCatch)
+- Pulsing status indicator achieved with CSS animation on ::before pseudo-element
+- `.status-connected` CSS class removes animation for stable connected state
+- useEffect dependency array [events.length, activities.size] triggers timestamp update on data changes
+- Responsive grid-template-columns: change column count at breakpoints, use grid-column: 1 / -1 for full-width
+- Mobile stacking uses single-column grid, columns have flex-direction: column to maintain card gaps
+- Header flexbox with justify-content: space-between creates perfect left/right split
+- Connection status color mapping: switch statement returns CSS var() for dynamic styling
+- Single WebSocket connection shared across all panels via props drilling (activities, events, status)
+- Test regex matching on media queries: use substring extraction to capture full CSS blocks
+- ErrorBoundary wraps entire app to catch any component render errors gracefully
+---

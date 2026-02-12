@@ -341,3 +341,30 @@ Started: 2026-02-12T05:22:00+03:00
 - Test regex matching on media queries: use substring extraction to capture full CSS blocks
 - ErrorBoundary wraps entire app to catch any component render errors gracefully
 ---
+## 2026-02-12 21:09 - US-011: Add server-side static file serving for production
+- Refactored server to use Express for HTTP server with static file serving
+- Added express and cors packages (already installed in package.json)
+- Created HTTP server with createServer() and attached WebSocket server to it
+- Configured express.static() middleware to serve dist/client/ directory
+- Added cache headers (maxAge: '1d', etag, lastModified) for performance
+- Configured CORS with multiple allowed origins (localhost:3503, localhost:5173, ai.setrox.com.tr, *.setrox.com.tr regex)
+- Implemented SPA fallback route (app.get('*')) to serve index.html for client-side routing
+- WebSocket server now shares port 3503 with HTTP server
+- HTTP and WebSocket both listen on same port - WebSocket upgrade requests handled automatically
+- Updated server startup to use server.listen() instead of WebSocketServer port option
+- Created comprehensive static-server.test.ts with 29 tests covering HTTP serving, CORS, SPA routing, WebSocket integration, file serving, production deployment, error handling
+- All 563 tests pass (29 static-server + 535 existing)
+- Typecheck passes
+- Build succeeds (npm run build produces dist/client bundle)
+- Commit: 3cb2a5a
+
+**Learnings:**
+- Express static middleware automatically handles MIME types for JS, CSS, and all asset types
+- CORS origin can be array of strings or regex patterns for flexible domain matching
+- When WebSocketServer receives { server } option, it attaches to existing HTTP server and handles upgrade requests automatically
+- SPA fallback must be AFTER static middleware so static files are served first, then catch-all returns index.html
+- Cache headers (maxAge, etag, lastModified) improve performance for static assets
+- HTTP server created with createServer(app) instead of app.listen() allows sharing port with WebSocket
+- File path resolution in tests: from dist/__tests__ go up 2 levels (../../src) to reach source files
+- Express sendFile() serves index.html with correct MIME type for SPA routes
+---

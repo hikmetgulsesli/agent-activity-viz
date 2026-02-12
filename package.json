@@ -1,0 +1,35 @@
+{
+  "name": "agent-activity-viz",
+  "version": "0.1.0",
+  "description": "Real-time WebSocket-based dashboard for OpenClaw agent activities",
+  "type": "module",
+  "scripts": {
+    "build": "tsc && vite build",
+    "dev": "concurrently \"tsc -w\" \"vite\" \"node --watch dist/server/index.js\"",
+    "start": "node dist/server/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@types/ws": "^8.5.10",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.10"
+  },
+  "keywords": [
+    "openclaw",
+    "agent",
+    "dashboard",
+    "websocket",
+    "real-time"
+  ],
+  "license": "MIT"
+}

@@ -1,0 +1,39 @@
+# Progress Log
+Run: b2024647-193b-4c5f-9dff-7c940847c8d0
+Task: Create Agent Activity Visualizer - a real-time WebSocket-based dashboard
+Started: 2026-02-12T05:22:00+03:00
+
+## Codebase Patterns
+- Project uses ES modules ("type": "module" in package.json)
+- TypeScript with strict mode enabled
+- Node.js built-in test runner (node:test) for tests
+- React 18 with JSX transform (react-jsx)
+- WebSocket server using 'ws' library
+- Vite for client bundling and dev server
+
+---
+
+## 2026-02-12 05:25 - US-001: Initialize project structure with Node.js + TypeScript
+- Created project directory structure at /home/setrox/.openclaw/agent-activity-viz
+- Initialized package.json with all required dependencies:
+  - Runtime: ws, react, react-dom
+  - Dev: @types/ws, @types/react, @types/react-dom, typescript, vite, concurrently
+- Set up tsconfig.json with ES2022 target, ESNext modules, strict mode, react-jsx
+- Created folder structure: src/server/, src/client/, dist/
+- Created initial source files:
+  - src/server/index.ts - WebSocket server entry point
+  - src/client/main.tsx - React entry point
+  - src/client/App.tsx - Root React component
+- Added vite.config.ts for build configuration
+- Added index.html as client entry point
+- Created comprehensive setup tests in src/__tests__/setup.test.ts
+- All 16 tests pass
+- Typecheck passes
+- Commit: bc0cf33
+
+**Learnings:**
+- Using `import type React from 'react'` doesn't work with JSX when React is used as a value (React.StrictMode)
+- Need to use `import React from 'react'` and give React a type annotation to avoid unused import errors
+- Node.js built-in test runner works well for project setup validation
+
+---

@@ -1,9 +1,13 @@
 import React from 'react';
 import GlassCard from './components/GlassCard';
+import AgentList from './components/AgentList';
+import { useWebSocket } from './hooks/useWebSocket';
 import './styles/global.css';
 import './App.css';
 
 function App(): React.ReactElement {
+  const { activities, status } = useWebSocket('ws://localhost:3503');
+
   return (
     <div className="app">
       <header className="app-header">
@@ -14,7 +18,7 @@ function App(): React.ReactElement {
       <main className="app-main">
         <div className="dashboard-grid">
           <GlassCard title="Active Agents" className="card-agents">
-            <p>No agents currently active</p>
+            <AgentList activities={activities} />
           </GlassCard>
           
           <GlassCard title="Tool Usage" className="card-tools">
@@ -34,7 +38,7 @@ function App(): React.ReactElement {
           </GlassCard>
           
           <GlassCard title="System Status" className="card-status">
-            <p>Connected</p>
+            <p>{status === 'connected' ? 'Connected' : status === 'connecting' ? 'Connecting...' : 'Disconnected'}</p>
           </GlassCard>
         </div>
       </main>

@@ -10,6 +10,30 @@ Started: 2026-02-12T05:22:00+03:00
 - React 18 with JSX transform (react-jsx)
 - WebSocket server using 'ws' library
 - Vite for client bundling and dev server
+- Server code uses .js extension for imports (ES modules with TypeScript)
+- WebSocket.OPEN = 1 for checking connection state
+
+---
+
+## 2026-02-12 05:46 - US-002: Create WebSocket server with agent activity streaming
+- Created AgentActivityStreamer class in src/server/AgentActivityStreamer.ts
+- Implemented WebSocket server with connection handling and client management
+- Added polling mechanism that scans ~/.openclaw/workspaces every 2 seconds
+- Implemented event types: agent_started, agent_ended, tool_called, model_switched, token_update, heartbeat
+- JSON message format with timestamp, agentId, eventType, payload
+- Heartbeat mechanism with ping/pong for connection health
+- Updated src/server/index.ts to use AgentActivityStreamer
+- Created comprehensive WebSocket tests in src/__tests__/websocket.test.ts
+- All 12 WebSocket tests pass
+- All 16 setup tests still pass
+- Typecheck passes
+- Commit: bd4bd97
+
+**Learnings:**
+- WebSocketServer connection handler runs synchronously but client setup may need a small delay in tests
+- Using separate ports for isolated tests prevents interference between tests
+- ws library ping/pong is built-in; just need to handle the 'pong' event
+- TypeScript strict mode catches unused variables - prefix with _ to indicate intentional unused params
 
 ---
 

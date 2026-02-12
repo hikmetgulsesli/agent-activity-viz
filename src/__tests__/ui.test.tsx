@@ -36,52 +36,53 @@ describe('UI Components', () => {
       assert.ok(content.includes('Real-time OpenClaw agent activity dashboard'));
     });
 
-    it('renders dashboard grid', async () => {
+    it('renders dashboard layout', async () => {
       const appPath = resolve('src/client/App.tsx');
       const content = await readFile(appPath, 'utf-8');
-      assert.ok(content.includes('dashboard-grid'));
+      assert.ok(content.includes('dashboard-layout'));
     });
 
     it('renders Active Agents card', async () => {
       const appPath = resolve('src/client/App.tsx');
       const content = await readFile(appPath, 'utf-8');
       assert.ok(content.includes('Active Agents'));
-      assert.ok(content.includes('card-agents'));
+      assert.ok(content.includes('column-left'));
     });
 
-    it('renders Tool Usage card', async () => {
+    it('renders Recent Activity card', async () => {
       const appPath = resolve('src/client/App.tsx');
       const content = await readFile(appPath, 'utf-8');
-      assert.ok(content.includes('Tool Usage'));
-      assert.ok(content.includes('card-tools'));
+      assert.ok(content.includes('Recent Activity'));
+      assert.ok(content.includes('column-center'));
     });
 
-    it('renders Model Switching card', async () => {
+    it('renders Model Switches card', async () => {
       const appPath = resolve('src/client/App.tsx');
       const content = await readFile(appPath, 'utf-8');
-      assert.ok(content.includes('Model Switching'));
-      assert.ok(content.includes('card-models'));
+      assert.ok(content.includes('Model Switches'));
+      assert.ok(content.includes('column-right'));
     });
 
     it('renders Token Usage card', async () => {
       const appPath = resolve('src/client/App.tsx');
       const content = await readFile(appPath, 'utf-8');
       assert.ok(content.includes('Token Usage'));
-      assert.ok(content.includes('card-tokens'));
+      assert.ok(content.includes('column-right'));
     });
 
-    it('renders Recent Events card', async () => {
+    it('renders 3-column layout', async () => {
       const appPath = resolve('src/client/App.tsx');
       const content = await readFile(appPath, 'utf-8');
-      assert.ok(content.includes('Recent Events'));
-      assert.ok(content.includes('card-events'));
+      assert.ok(content.includes('column-left'));
+      assert.ok(content.includes('column-center'));
+      assert.ok(content.includes('column-right'));
     });
 
-    it('renders System Status card', async () => {
+    it('wraps app in ErrorBoundary', async () => {
       const appPath = resolve('src/client/App.tsx');
       const content = await readFile(appPath, 'utf-8');
-      assert.ok(content.includes('System Status'));
-      assert.ok(content.includes('card-status'));
+      assert.ok(content.includes('import ErrorBoundary'));
+      assert.ok(content.includes('<ErrorBoundary>'));
     });
 
     it('uses GlassCard components', async () => {
@@ -89,7 +90,7 @@ describe('UI Components', () => {
       const content = await readFile(appPath, 'utf-8');
       assert.ok(content.includes('import GlassCard'));
       const glassCardMatches = content.match(/<GlassCard/g);
-      assert.ok(glassCardMatches && glassCardMatches.length === 6, 'Should have 6 GlassCard components');
+      assert.ok(glassCardMatches && glassCardMatches.length === 4, 'Should have 4 GlassCard components');
     });
   });
 
@@ -171,12 +172,12 @@ describe('UI Components', () => {
       const cssPath = resolve('src/client/App.css');
       const css = await readFile(cssPath, 'utf-8');
       
-      // Check for desktop (3 columns)
-      assert.ok(css.includes('grid-template-columns: repeat(3, 1fr)'));
+      // Check for desktop (3 columns: 1fr 2fr 1fr = 25% 50% 25%)
+      assert.ok(css.includes('grid-template-columns: 1fr 2fr 1fr'));
       
       // Check for tablet media query (2 columns)
       assert.ok(css.includes('@media (max-width: 1023px)'));
-      assert.ok(css.includes('grid-template-columns: repeat(2, 1fr)'));
+      assert.ok(css.includes('grid-template-columns: 1fr 2fr'));
       
       // Check for mobile media query (1 column)
       assert.ok(css.includes('@media (max-width: 639px)'));

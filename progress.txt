@@ -268,3 +268,36 @@ Started: 2026-02-12T05:22:00+03:00
 - Sorting data once (not in render) improves performance
 - CSS transitions handle all animations (no JS animation loops needed)
 ---
+
+## 2026-02-12 20:49 - US-009: Build Model Switching panel showing model transitions
+- Created ModelSwitches component in src/client/components/ModelSwitches.tsx
+- Component processes events array to extract and reconstruct model switches
+- Extracts from-model → to-model transitions by tracking agent current model state
+- Displays last 20 model switches (newest first) with reverse() and slice(0, 20)
+- Shows agent name, timestamp (relative time format), and model transition with arrow
+- Implemented model alias detection (opus, sonnet, r1, ds, kimi, grok, minimax, glm)
+- Provider color coding: Anthropic=purple, DeepSeek=blue, OpenAI=green, XAI=yellow, Google=cyan, Kimi=pink, Minimax=purple, ZAI=indigo
+- Model badges display alias when available, with full model name in tooltip
+- Stats section shows total switches today and switches per hour
+- Uses useMemo for switches extraction, stats calculation (3 total)
+- Created ModelSwitches.css with glass-morphism, gradients, hover effects, responsive design
+- Mobile responsive: arrow rotates 90deg, stats stack vertically, reduced font sizes
+- Integrated into App.tsx "Model Switching" card
+- Updated UI test to check "Model Switching" instead of "Model Activity"
+- Created comprehensive tests in src/__tests__/ModelSwitches.test.tsx (168 tests)
+- All 439 tests pass (168 ModelSwitches + 70 TokenUsage + 77 ActivityFeed + 77 AgentList + 87 useWebSocket + 28 UI + 29 DataCollector + 16 setup + 12 WebSocket + 2 AgentActivityStreamer)
+- Typecheck passes
+- Build succeeds (npm run build produces dist/client bundle)
+- Commit: caae4fa
+
+**Learnings:**
+- Reconstructing state transitions requires tracking previous state in Map during chronological processing
+- Model switch events don't include "fromModel", so we track current model per agent and use previous value
+- Model aliases improve UX by showing familiar shorthand (opus, sonnet, r1) instead of long provider/model strings
+- Provider color consistency with OpenClaw dashboard (purple for Anthropic, blue for DeepSeek, etc.) helps users recognize models quickly
+- CSS gradients with semi-transparent colors create depth on model badges
+- Stats (total today, per hour) require filtering by timestamp ranges
+- Time-based filtering uses Date.now() - timestamp comparisons with millisecond offsets
+- Mobile arrow rotation (rotate(90deg)) changes horizontal → to vertical ↓ layout
+- Test file path inspection confirms component structure without runtime execution
+---

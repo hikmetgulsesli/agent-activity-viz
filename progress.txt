@@ -228,3 +228,43 @@ Started: 2026-02-12T05:22:00+03:00
 - Mobile responsive: flex-direction column for event header, reduced padding
 
 ---
+
+## 2026-02-12 20:29 - US-008: Build Token Usage panel with real-time charts
+- Created TokenUsage component in src/client/components/TokenUsage.tsx
+- Displays real-time token consumption visualization with custom SVG charts (no external dependencies)
+- Shows total tokens today as large animated number (pulse effect) with formatted display (M/K suffixes)
+- Per-agent token usage shown as horizontal bar charts with input/output breakdown
+- Input tokens shown as darker segment within each bar
+- Bars scaled relative to max agent usage for easy visual comparison
+- Per-model breakdown shown as stacked horizontal bar (like pie chart) with color coding
+- Model colors consistent with OpenClaw dashboard: claude-sonnet=primary, opus=accent, gpt-4=success, deepseek=warning, gemini=info
+- Legend displays each model with color indicator, name, formatted total, and percentage
+- Number formatting: 1.23M for millions, 1.23K for thousands
+- Empty state shown when no token data available
+- Charts update smoothly with CSS transitions (0.3s ease-out)
+- Hover effects on bars and legend items for interactivity
+- Tooltips show exact input/output counts on agent bars, model details on segments
+- Created TokenUsage.css with glass-morphism styling, animations, responsive design
+- Responsive layout: reduced font sizes and bar heights on mobile (640px breakpoint)
+- Integrated TokenUsage into App.tsx "Token Usage" card
+- Created comprehensive tests in src/__tests__/TokenUsage.test.tsx (70 tests)
+- Tests verify: component structure, data processing, model color mapping, number formatting, empty state, total display, per-agent bars, per-model breakdown, CSS styles, accessibility, performance
+- All 358 tests pass (70 TokenUsage + 77 ActivityFeed + 77 AgentList + 87 useWebSocket + 28 UI + 29 DataCollector + 16 setup + 12 WebSocket + 2 AgentActivityStreamer)
+- Typecheck passes
+- Build succeeds (npm run build produces dist/client bundle)
+- Commit: 12d2f42
+
+**Learnings:**
+- Lightweight custom SVG/CSS charts avoid external dependencies and bundle bloat
+- Stacked horizontal bars work well as "pie chart" alternative for model breakdown
+- CSS pulse animation on large numbers draws attention to key metrics
+- Inline styles needed for dynamic width percentages: style={{ width: `${percentage}%` }}
+- Map used for efficient model token aggregation during data processing
+- Number formatters make large token counts readable (1234567 → "1.23M")
+- Color consistency with OpenClaw dashboard improves UX (model colors match expectations)
+- Test file path needs to go up two levels from dist/__tests__/ to reach src/ directory
+- Gradient backgrounds (linear-gradient) provide visual depth on token bars
+- Title tooltips provide accessible way to show exact numbers without cluttering UI
+- Sorting data once (not in render) improves performance
+- CSS transitions handle all animations (no JS animation loops needed)
+---

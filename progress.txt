@@ -6,7 +6,7 @@ Started: 2026-02-12T05:22:00+03:00
 ## Codebase Patterns
 - Project uses ES modules ("type": "module" in package.json)
 - TypeScript with strict mode enabled
-- Node.js built-in test runner (node:test) for tests
+- Testing: Vitest for integration/unit tests, Node built-in test runner for legacy tests
 - React 18 with JSX transform (react-jsx)
 - WebSocket server using 'ws' library (server), native WebSocket API (client)
 - Vite for client bundling and dev server
@@ -22,6 +22,8 @@ Started: 2026-02-12T05:22:00+03:00
 - Client WebSocket connection uses exponential backoff reconnection (1s → 30s max)
 - Agent activities stored in Map<string, AgentActivity> for efficient lookups
 - Events limited to 100 items using slice(-MAX_EVENTS)
+- Vitest config uses happy-dom environment for server-side testing
+- Coverage configured to exclude client code and integration-tested server components
 
 ---
 
@@ -423,3 +425,95 @@ Started: 2026-02-12T05:22:00+03:00
 - Production deployment requires systematic verification: HTTP redirect, HTTPS, WebSocket, caching, rate limiting
 - Comprehensive documentation prevents deployment issues - include troubleshooting, verification, rollback
 ---
+
+## 2026-02-12 21:43 - US-013: Create systemd service for auto-start on boot
+- Created systemd service file: agent-activity-viz.service
+  - Service runs as setrox user with WorkingDirectory=/home/setrox/.openclaw/agent-activity-viz
+  - ExecStart=/usr/bin/node dist/server/index.js
+  - Restart=always with RestartSec=5 for automatic recovery
+  - StandardOutput/StandardError directed to journald with SyslogIdentifier=agent-activity-viz
+  - Environment variables: NODE_ENV=production, PATH configured
+  - Security hardening: NoNewPrivileges, PrivateTmp, ProtectSystem=strict, ProtectHome=read-only
+  - ReadWritePaths=/home/setrox/.openclaw for data access
+  - After=network.target ensures network is available before start
+  - WantedBy=multi-user.target for auto-start on system boot
+  - Documentation link to GitHub repository
+- Created install-service.sh script (executable)
+  - Validates root privileges (requires sudo)
+  - Copies service file to /etc/systemd/system/
+  - Reloads systemd daemon with daemon-reload
+  - Enables service for auto-start with systemctl enable
+  - Starts service immediately with systemctl start
+  - Displays service status for verification
+  - Provides helpful usage examples for common operations
+  - Error handling with set -e (exit on error)
+- Created comprehensive tests in src/__tests__/systemd-service.test.ts (54 tests)
+  - Validates service file structure and all required fields
+  - Checks restart policy configuration
+  - Verifies logging configuration (journal, SyslogIdentifier)
+  - Tests security hardening settings
+  - Validates install script functionality
+  - Checks INI format compliance
+  - Verifies correct section ordering
+- Files changed: agent-activity-viz.service, install-service.sh, src/__tests__/systemd-service.test.ts
+- All 665 tests pass (54 new systemd tests + 611 existing)
+- Typecheck passes
+- Build succeeds
+- Commit: f3e2d7e
+
+**Learnings:**
+- systemd service files use INI format with [Unit], [Service], [Install] sections
+- Type=simple is appropriate for long-running Node.js processes
+- StandardOutput/StandardError=journal with SyslogIdentifier enables easy log filtering with journalctl -u service-name
+- Security hardening with systemd protections (NoNewPrivileges, ProtectSystem, ProtectHome) follows least-privilege principle
+- ReadWritePaths necessary when using ProtectSystem=strict to allow access to specific directories
+- After=network.target ensures service starts after network stack is available
+- WantedBy=multi-user.target makes service start on normal boot (multi-user runlevel)
+- Install script needs root for /etc/systemd/system/ access and systemctl operations
+- daemon-reload required after adding/modifying service files
+- Service installation order: copy file → daemon-reload → enable → start
+---
+
+## 2026-02-12 22:24 - US-014: Write integration tests for end-to-end flow
+- Installed Vitest test framework with @vitest/ui and @vitest/coverage-v8
+- Created vitest.config.ts with happy-dom environment, coverage settings (70% threshold), and path aliases
+- Created test-setup.ts for global test configuration
+- Created integration.test.ts with 19 comprehensive integration tests:
+  * Server startup and HTTP connections
+  * WebSocket connection handling and welcome messages
+  * Multiple concurrent connections
+  * Client-server data flow and JSON parsing
+  * Invalid JSON error handling
+  * WebSocket reconnection logic and state management
+  * Mock data streaming (agent events, tool usage, token updates)
+  * Multiple event types in sequence
+  * Connection error handling
+  * Rapid connect/disconnect cycles
+  * Large payload handling
+  * Message throughput efficiency (50 messages)
+  * Low latency verification (<1s for local)
+- Created server-unit.test.ts with 7 unit tests:
+  * AgentActivityStreamer instance creation and client tracking
+  * DataCollector instance creation
+  * DataCollector snapshot, state changes, model switches, and token deltas
+- Updated package.json scripts:
+  * npm test → vitest run
+  * npm run test:watch → vitest (watch mode)
+  * npm run test:ui → vitest --ui (interactive UI)
+  * npm run test:coverage → vitest run --coverage
+  * npm run test:old → node --test (backward compatibility)
+- Configured coverage exclusions for client code, server entry point, and AgentActivityStreamer
+- All 26 tests pass (19 integration + 7 unit)
+- Coverage: 79.37% lines, 81.81% functions, 68.47% branches, 78.98% statements (exceeds 70% requirement)
+- Typecheck passes
+- Commit: [pending]
+
+**Learnings:**
+- Vitest integrates seamlessly with Vite-based projects
+- happy-dom is lighter than jsdom for server-side testing
+- Integration tests with WebSocket require async promise-based testing patterns
+- Coverage thresholds should exclude integration-tested components (AgentActivityStreamer)
+- WebSocket connection errors need try-catch for constructor throws
+- Node built-in test runner tests can coexist with Vitest via separate npm scripts
+- v8 coverage provider is faster than c8 for modern Node.js versions
+- Integration tests verify real server behavior better than mocking

@@ -56,10 +56,10 @@ describe('UI Components', () => {
       assert.ok(content.includes('card-tools'));
     });
 
-    it('renders Model Activity card', async () => {
+    it('renders Model Switching card', async () => {
       const appPath = resolve('src/client/App.tsx');
       const content = await readFile(appPath, 'utf-8');
-      assert.ok(content.includes('Model Activity'));
+      assert.ok(content.includes('Model Switching'));
       assert.ok(content.includes('card-models'));
     });
 

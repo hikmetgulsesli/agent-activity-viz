@@ -3,6 +3,7 @@ import GlassCard from './components/GlassCard';
 import AgentList from './components/AgentList';
 import ActivityFeed from './components/ActivityFeed';
 import TokenUsage from './components/TokenUsage';
+import ModelSwitches from './components/ModelSwitches';
 import { useWebSocket } from './hooks/useWebSocket';
 import './styles/global.css';
 import './App.css';
@@ -27,8 +28,8 @@ function App(): React.ReactElement {
             <p>Waiting for activity...</p>
           </GlassCard>
           
-          <GlassCard title="Model Activity" className="card-models">
-            <p>Waiting for activity...</p>
+          <GlassCard title="Model Switching" className="card-models">
+            <ModelSwitches events={events} />
           </GlassCard>
           
           <GlassCard title="Token Usage" className="card-tokens">

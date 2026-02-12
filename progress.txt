@@ -89,3 +89,16 @@ Started: 2026-02-12T05:22:00+03:00
 - Node.js built-in test runner works well for project setup validation
 
 ---
+
+## 2026-02-12 19:18 - US-003 Verification: Fix test script
+- Fixed test script to run compiled tests from dist/ instead of src/
+- All 57 tests pass (29 DataCollector + 16 setup + 12 WebSocket)
+- Typecheck passes
+- Commit: 810f19f
+
+**Learnings:**
+- Test files must run from dist/ because the imports use .js extensions (ES modules)
+- Node.js test runner with --test flag works well with compiled test files
+- Tests are automatically compiled when running npm run build
+
+---

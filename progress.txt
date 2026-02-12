@@ -160,3 +160,36 @@ Started: 2026-02-12T05:22:00+03:00
 - Agent activities keyed by agentId in Map for O(1) lookups
 
 ---
+
+## 2026-02-12 20:02 - US-006: Build Agent List panel showing active agents
+- Created AgentList component in src/client/components/AgentList.tsx
+- Component consumes activities Map from useWebSocket hook
+- Displays agent name, current model, status badge (active/idle/ended), and tools used
+- Shows context usage percentage with color-coded progress bar (green < 60%, orange < 80%, red >= 80%)
+- Sorts agents by lastActivity timestamp (most recent first) using Array.from() and sort()
+- Implemented agent type badges: main (blue), cron (orange), subagent (green)
+- Auto-updates in real-time when agents join/leave (React re-renders on Map prop change)
+- Created AgentList.css with glass-morphism styles, hover effects, responsive design
+- Integrated AgentList into App.tsx Active Agents card
+- App.tsx now uses useWebSocket hook to connect to ws://localhost:3503
+- Updated System Status card to show connection status (connecting/connected/disconnected)
+- Created comprehensive tests in src/__tests__/AgentList.test.tsx (77 tests)
+- All 223 tests pass (77 AgentList + 87 useWebSocket + 28 UI + 29 DataCollector + 16 setup + 12 WebSocket)
+- Typecheck passes
+- Build succeeds (npm run build produces dist/client bundle)
+- Commit: 55ba469
+
+**Learnings:**
+- Agent type detection uses string includes: 'cron:' for cron, 'subagent' or 'sub-' for subagents
+- Context usage calculated as (input + output tokens) / 200k limit (Claude Sonnet 4)
+- Progress bar width set with inline style: `style={{ width: '${percentage}%' }}`
+- Status colors: active=green (--color-success), idle=gray (semi-transparent), ended=red tint
+- Helper functions (calculateContextUsage, getAgentType, getStatusColorClass, getContextColorClass) keep JSX clean
+- Empty state shows when agentList.length === 0 (after converting Map to Array)
+- Sorting inside component (not useMemo) ensures re-sort on every render for real-time updates
+- Map state changes trigger React re-renders (useWebSocket creates new Map instances)
+- Responsive padding reduces on mobile: var(--spacing-md) → var(--spacing-sm)
+- Tools array join(', ') for comma-separated display, or show "none" if empty
+- CSS hover effect: translateY(-2px) + shadow-md for visual feedback
+
+---

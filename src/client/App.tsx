@@ -1,12 +1,13 @@
 import React from 'react';
 import GlassCard from './components/GlassCard';
 import AgentList from './components/AgentList';
+import ActivityFeed from './components/ActivityFeed';
 import { useWebSocket } from './hooks/useWebSocket';
 import './styles/global.css';
 import './App.css';
 
 function App(): React.ReactElement {
-  const { activities, status } = useWebSocket('ws://localhost:3503');
+  const { activities, events, status } = useWebSocket('ws://localhost:3503');
 
   return (
     <div className="app">
@@ -34,7 +35,7 @@ function App(): React.ReactElement {
           </GlassCard>
           
           <GlassCard title="Recent Events" className="card-events">
-            <p>No recent events</p>
+            <ActivityFeed events={events} />
           </GlassCard>
           
           <GlassCard title="System Status" className="card-status">

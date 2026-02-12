@@ -1,0 +1,227 @@
+.token-usage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+  height: 100%;
+}
+
+.token-usage-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
+}
+
+/* Total tokens today */
+.token-total {
+  text-align: center;
+  padding: var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--border-radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.token-total-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-xs);
+}
+
+.token-total-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1;
+  animation: pulse-count 2s ease-in-out;
+}
+
+@keyframes pulse-count {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.token-total-exact {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  margin-top: var(--spacing-xs);
+}
+
+/* Sections */
+.token-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.token-section-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0;
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Per-agent bars */
+.token-agent-bars {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.token-agent-bar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.token-agent-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--font-size-sm);
+}
+
+.token-agent-name {
+  color: var(--color-text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.token-agent-total {
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  margin-left: var(--spacing-sm);
+}
+
+.token-bar-container {
+  width: 100%;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  position: relative;
+}
+
+.token-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent) 100%);
+  border-radius: var(--border-radius-sm);
+  transition: width 0.3s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.token-bar-input {
+  height: 100%;
+  background: var(--color-primary);
+  transition: width 0.3s ease-out;
+}
+
+.token-bar:hover {
+  opacity: 0.9;
+}
+
+/* Per-model chart */
+.token-model-chart {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.token-model-bar-container {
+  display: flex;
+  height: 40px;
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.token-model-segment {
+  height: 100%;
+  transition: all 0.3s ease-out;
+  cursor: pointer;
+  position: relative;
+}
+
+.token-model-segment:hover {
+  opacity: 0.8;
+}
+
+.token-model-legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.token-model-legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs);
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--border-radius-sm);
+  transition: background 0.2s ease;
+}
+
+.token-model-legend-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.token-model-legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--border-radius-sm);
+  flex-shrink: 0;
+}
+
+.token-model-legend-name {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.token-model-legend-value {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .token-total-number {
+    font-size: 2.5rem;
+  }
+
+  .token-section-title {
+    font-size: var(--font-size-sm);
+  }
+
+  .token-agent-info {
+    font-size: var(--font-size-xs);
+  }
+
+  .token-bar-container {
+    height: 20px;
+  }
+
+  .token-model-bar-container {
+    height: 32px;
+  }
+}

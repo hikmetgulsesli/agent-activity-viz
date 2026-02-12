@@ -2,6 +2,7 @@ import React from 'react';
 import GlassCard from './components/GlassCard';
 import AgentList from './components/AgentList';
 import ActivityFeed from './components/ActivityFeed';
+import TokenUsage from './components/TokenUsage';
 import { useWebSocket } from './hooks/useWebSocket';
 import './styles/global.css';
 import './App.css';
@@ -31,7 +32,7 @@ function App(): React.ReactElement {
           </GlassCard>
           
           <GlassCard title="Token Usage" className="card-tokens">
-            <p>Waiting for activity...</p>
+            <TokenUsage activities={activities} />
           </GlassCard>
           
           <GlassCard title="Recent Events" className="card-events">

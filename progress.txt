@@ -193,3 +193,38 @@ Started: 2026-02-12T05:22:00+03:00
 - CSS hover effect: translateY(-2px) + shadow-md for visual feedback
 
 ---
+
+## 2026-02-12 20:13 - US-007: Build Activity Feed panel with tool usage stream
+- Created ActivityFeed component in src/client/components/ActivityFeed.tsx
+- Displays chronological stream of agent events (newest first using reverse())
+- Shows timestamp, agent name, event type, and details for each event
+- Implemented formatRelativeTime function (converts timestamps to "2m ago" format)
+- Implemented getEventDetails function (extracts meaningful info from event payload)
+- Color-coded event types using border-left: tool_called=blue, model_switched=purple, agent_started=green, agent_ended=red
+- Auto-scroll to newest events with pause on manual scroll up
+- Implemented scroll detection: isAtBottom threshold (10px), userScrolled state
+- Scroll indicator appears when new events arrive while user scrolled up
+- Limited feed to 100 events using slice(0, 100) on reversed array
+- Empty state shown when no events
+- Created ActivityFeed.css with glass-morphism styles, hover effects, responsive design
+- Integrated ActivityFeed into App.tsx "Recent Events" card
+- App.tsx now destructures events from useWebSocket hook
+- Created comprehensive tests in src/__tests__/ActivityFeed.test.tsx (77 tests)
+- All 288 tests pass (77 ActivityFeed + 77 AgentList + 87 useWebSocket + 28 UI + 29 DataCollector + 16 setup + 12 WebSocket + 2 AgentActivityStreamer)
+- Typecheck passes
+- Build succeeds (npm run build produces dist/client bundle)
+- Commit: d882005
+
+**Learnings:**
+- Auto-scroll requires checking scrollHeight - scrollTop - clientHeight < threshold
+- Scroll indicator uses position: sticky to stay visible at bottom
+- Event reversal ([...events].reverse()) shows newest first without mutating original array
+- useEffect dependency on events triggers auto-scroll when new events arrive
+- useRef tracks previous events.length to detect when new events were added
+- Relative time formatting: seconds < 60, minutes < 60, hours < 24, then days
+- Event details extracted via switch statement on eventType with payload access
+- Border-left color coding provides visual distinction without full background changes
+- CSS animation (pulse) draws attention to scroll indicator
+- Mobile responsive: flex-direction column for event header, reduced padding
+
+---

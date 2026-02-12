@@ -8,7 +8,7 @@ Started: 2026-02-12T05:22:00+03:00
 - TypeScript with strict mode enabled
 - Node.js built-in test runner (node:test) for tests
 - React 18 with JSX transform (react-jsx)
-- WebSocket server using 'ws' library
+- WebSocket server using 'ws' library (server), native WebSocket API (client)
 - Vite for client bundling and dev server
 - Server code uses .js extension for imports (ES modules with TypeScript)
 - WebSocket.OPEN = 1 for checking connection state
@@ -18,6 +18,10 @@ Started: 2026-02-12T05:22:00+03:00
 - Client components tested via source file inspection (not runtime) because Vite bundles output
 - CSS uses CSS custom properties (variables) for theming with :root selector
 - Responsive design uses media queries at 640px (mobile) and 1024px (tablet) breakpoints
+- Custom React hooks in src/client/hooks/ directory
+- Client WebSocket connection uses exponential backoff reconnection (1s → 30s max)
+- Agent activities stored in Map<string, AgentActivity> for efficient lookups
+- Events limited to 100 items using slice(-MAX_EVENTS)
 
 ---
 
@@ -124,5 +128,35 @@ Started: 2026-02-12T05:22:00+03:00
 - Test files must run from dist/ because the imports use .js extensions (ES modules)
 - Node.js test runner with --test flag works well with compiled test files
 - Tests are automatically compiled when running npm run build
+
+---
+
+## 2026-02-12 19:51 - US-005: Implement WebSocket client hook for real-time data
+- Created useWebSocket custom React hook in src/client/hooks/useWebSocket.ts
+- Hook connects to WebSocket server at configurable URL (ws://localhost:3503)
+- Manages connection lifecycle: connecting → connected → disconnected
+- Implements exponential backoff for reconnection (1s, 2s, 4s... max 30s)
+- Parses and validates incoming JSON messages (schema validation)
+- Maintains Map of agent activities (agentId → AgentActivity)
+- Tracks agent status: active, idle, ended
+- Handles 6 event types: agent_started, agent_ended, tool_called, model_switched, token_update, heartbeat
+- Updates activities based on events (tools used, model switches, token usage)
+- Stores last 100 events in events array
+- Provides connection status to UI: 'connecting' | 'connected' | 'disconnected'
+- Cleans up WebSocket and timers on component unmount
+- Created comprehensive tests in src/__tests__/useWebSocket.test.ts (87 tests)
+- All 160 tests pass (87 useWebSocket + 28 UI + 29 DataCollector + 16 setup)
+- Typecheck passes
+- Commit: b777f3c
+
+**Learnings:**
+- React hooks cleanup must check unmounted state before calling setState to avoid memory leaks
+- useRef is perfect for storing WebSocket connection (persists across renders, doesn't trigger re-render)
+- useCallback dependencies matter - include all state/props used inside the callback
+- Exponential backoff formula: Math.min(BASE * 2^attempts, MAX) caps delay appropriately
+- Map state updates require creating new Map instance: new Map(prevMap) for React to detect change
+- Browser WebSocket API is available in client code (no need for 'ws' library on client side)
+- TypeScript union types for status ('connecting' | 'connected' | 'disconnected') provide type safety
+- Agent activities keyed by agentId in Map for O(1) lookups
 
 ---

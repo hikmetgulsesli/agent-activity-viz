@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
+    "build:client": "vite build",
     "dev": "concurrently \"tsc -w\" \"vite\" \"node --watch dist/server/index.js\"",
     "start": "node dist/server/index.js",
     "test": "node --test dist/__tests__/**/*.test.js",

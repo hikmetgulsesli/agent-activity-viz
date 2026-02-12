@@ -1,0 +1,28 @@
+[Unit]
+Description=Agent Activity Visualizer - Real-time OpenClaw Agent Dashboard
+Documentation=https://github.com/hikmetgulsesli/agent-activity-viz
+After=network.target
+
+[Service]
+Type=simple
+User=setrox
+Group=setrox
+WorkingDirectory=/home/setrox/.openclaw/agent-activity-viz
+Environment="NODE_ENV=production"
+Environment="PATH=/usr/bin:/usr/local/bin"
+ExecStart=/usr/bin/node dist/server/index.js
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=agent-activity-viz
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/home/setrox/.openclaw
+
+[Install]
+WantedBy=multi-user.target

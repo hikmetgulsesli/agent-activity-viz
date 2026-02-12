@@ -29,7 +29,7 @@ export default defineConfig({
         statements: 70,
       },
     },
-    include: ['src/__tests__/integration.test.ts', 'src/__tests__/server-unit.test.ts'],
+    include: ['src/__tests__/integration.test.ts', 'src/__tests__/server-unit.test.ts', 'src/__tests__/readme.test.ts'],
     exclude: ['node_modules', 'dist'],
   },
   resolve: {

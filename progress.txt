@@ -10,6 +10,58 @@ Started: 2026-02-12T05:22:00+03:00
 - React 18 with JSX transform (react-jsx)
 - WebSocket server using 'ws' library
 - Vite for client bundling and dev server
+- Server code uses .js extension for imports (ES modules with TypeScript)
+- WebSocket.OPEN = 1 for checking connection state
+- DataCollector reads from ~/.openclaw/agents/, dashboard/data.json, and openclaw.json
+- Session JSONL files contain tool usage in 'tool_result' and 'toolCall' events
+- Dashboard data.json uses 'agent' field for agent name (not 'agentId')
+
+---
+
+## 2026-02-12 17:22 - US-003: Build data collector for OpenClaw agent activities
+- Created DataCollector class in src/server/DataCollector.ts
+- Reads session data from ~/.openclaw/agents/ directory structure
+- Parses openclaw.json for model configurations
+- Reads dashboard/data.json for current session info
+- Tracks agent state changes (started, active, ended) with detectStateChanges()
+- Calculates token usage deltas between polls with calculateTokenDeltas()
+- Detects model switches with detectModelSwitches()
+- Tracks tool usage from session JSONL files with parseSessionFile()
+- Provides takeSnapshot() for full state capture
+- Added comprehensive tests in src/__tests__/DataCollector.test.ts
+- All 29 DataCollector tests pass
+- All 12 WebSocket tests still pass
+- All 16 setup tests still pass
+- Typecheck passes
+- Commit: b28897d
+
+**Learnings:**
+- Dashboard data.json uses 'agent' field (not 'agentId') for agent name
+- Session JSONL files contain tool calls in 'tool_result' and 'toolCall' events
+- Some sessions have 'tool_calls' array in message objects
+- Agent status determined by last activity time (active < 5min, idle < 1hr, ended otherwise)
+
+---
+
+## 2026-02-12 05:46 - US-002: Create WebSocket server with agent activity streaming
+- Created AgentActivityStreamer class in src/server/AgentActivityStreamer.ts
+- Implemented WebSocket server with connection handling and client management
+- Added polling mechanism that scans ~/.openclaw/workspaces every 2 seconds
+- Implemented event types: agent_started, agent_ended, tool_called, model_switched, token_update, heartbeat
+- JSON message format with timestamp, agentId, eventType, payload
+- Heartbeat mechanism with ping/pong for connection health
+- Updated src/server/index.ts to use AgentActivityStreamer
+- Created comprehensive WebSocket tests in src/__tests__/websocket.test.ts
+- All 12 WebSocket tests pass
+- All 16 setup tests still pass
+- Typecheck passes
+- Commit: bd4bd97
+
+**Learnings:**
+- WebSocketServer connection handler runs synchronously but client setup may need a small delay in tests
+- Using separate ports for isolated tests prevents interference between tests
+- ws library ping/pong is built-in; just need to handle the 'pong' event
+- TypeScript strict mode catches unused variables - prefix with _ to indicate intentional unused params
 
 ---
 
@@ -35,5 +87,18 @@ Started: 2026-02-12T05:22:00+03:00
 - Using `import type React from 'react'` doesn't work with JSX when React is used as a value (React.StrictMode)
 - Need to use `import React from 'react'` and give React a type annotation to avoid unused import errors
 - Node.js built-in test runner works well for project setup validation
+
+---
+
+## 2026-02-12 19:18 - US-003 Verification: Fix test script
+- Fixed test script to run compiled tests from dist/ instead of src/
+- All 57 tests pass (29 DataCollector + 16 setup + 12 WebSocket)
+- Typecheck passes
+- Commit: 810f19f
+
+**Learnings:**
+- Test files must run from dist/ because the imports use .js extensions (ES modules)
+- Node.js test runner with --test flag works well with compiled test files
+- Tests are automatically compiled when running npm run build
 
 ---

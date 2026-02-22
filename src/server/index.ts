@@ -34,7 +34,7 @@ app.use(express.static(clientPath, {
 }));
 
 // SPA fallback - serve index.html for all routes
-app.get('*', (_req, res) => {
+app.get('/{*path}', (_req, res) => {
   res.sendFile(join(clientPath, 'index.html'));
 });
 

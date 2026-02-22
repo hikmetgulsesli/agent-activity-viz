@@ -517,3 +517,36 @@ Started: 2026-02-12T05:22:00+03:00
 - Node built-in test runner tests can coexist with Vitest via separate npm scripts
 - v8 coverage provider is faster than c8 for modern Node.js versions
 - Integration tests verify real server behavior better than mocking
+## 2026-02-12 22:33 - US-015: Create README with setup and deployment instructions
+- Created comprehensive README.md with 13KB+ of documentation
+- Documented project overview with features list (Real-Time Monitoring, Comprehensive Tracking, Modern UI, Production Ready)
+- Added Quick Start section with development and production build instructions
+- Documented all npm scripts: install, dev, build, start, test, test:watch, test:ui, test:coverage, typecheck
+- Created Architecture section with data flow diagram, component descriptions, event types, file structure
+- Documented Configuration with environment variables table (PORT, POLL_INTERVAL, NODE_ENV) and OpenClaw data sources
+- Added Testing section with test commands, coverage thresholds (79% lines, 81% functions), test structure
+- Documented Deployment with production steps, systemd service, nginx configuration, SSL/TLS setup
+- Created Troubleshooting section with solutions for WebSocket, agent data, build errors, rate limiting issues
+- Added Performance section with benchmarks (latency, throughput, memory, CPU) and optimization tips
+- Documented Contributing guidelines with workflow, commit message format (conventional commits)
+- Included License (MIT), Support section with links, Roadmap, Acknowledgments
+- Used markdown formatting with badges, emoji icons, code blocks, tables, proper headers
+- Created comprehensive test suite in src/__tests__/readme.test.ts (61 tests)
+- Tests verify: README existence, all sections present, content structure, code examples, formatting, completeness
+- Updated vitest.config.ts to include readme.test.ts in test suite
+- All 87 tests pass (61 README + 7 server-unit + 19 integration)
+- Typecheck passes
+- Commit: 91b4c04
+
+**Learnings:**
+- Comprehensive documentation requires covering all user personas: developers (setup), operators (deployment), contributors (guidelines)
+- README structure follows standard pattern: Overview → Quick Start → Architecture → Configuration → Testing → Deployment → Troubleshooting
+- Code examples should be copy-pasteable with actual project commands (not placeholders)
+- Tables work well for configuration reference (environment variables with defaults)
+- Badges provide quick visual indicators (license, Node version, TypeScript version)
+- Testing documentation itself ensures completeness and catches missing sections
+- Vitest include: [] array limits which test files run - need to explicitly add new test files
+- Documentation tests should verify structure, not exact wording (allows updates without breaking tests)
+- Markdown tables use | separators and |---|---|---| divider row
+- Long READMEs benefit from clear section hierarchy (H2 for main sections, H3 for subsections)
+---

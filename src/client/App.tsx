@@ -11,7 +11,8 @@ import './styles/ErrorBoundary.css';
 import './App.css';
 
 function App(): React.ReactElement {
-  const { activities, events, status } = useWebSocket('ws://localhost:3503');
+  const wsUrl = `${window.location.protocol === "https:" ? "wss:" : "ws:"}//${window.location.host}`;
+  const { activities, events, status } = useWebSocket(wsUrl);
   const [lastUpdate, setLastUpdate] = React.useState<Date>(new Date());
 
   // Update timestamp whenever we receive new events or activity changes
